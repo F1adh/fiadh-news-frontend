@@ -6,6 +6,7 @@ import { ThreeDots } from 'react-loader-spinner';
 function Article(){
     const { article_id } = useParams()
     const [articleData, setArticleData] = useState(null);
+    const [articleComments, setArticleComments] = useState(null)
     
     const myHeaders = new Headers();
     myHeaders.append("Accept", "application/json");
@@ -29,6 +30,25 @@ function Article(){
         })
     }
 
+    const getArticleComments = () =>{
+        const apiPath = `https://fiadh-nc-news.onrender.com/api/articles/${article_id}/comments`
+        const requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+            redirect: "follow"
+        }
+
+        fetch(apiPath, requestOptions)
+        .then((response)=>response.json())
+        .then(({comments})=>{
+            setArticleComments(comments)
+            
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    }
+
     const dateOptions={ weekday: 'short',
         year: 'numeric',
         month: 'short',
@@ -38,14 +58,15 @@ function Article(){
 
     useEffect(()=>{
         getArticleData()
+        getArticleComments()
     }, [article_id])
 
     return(
         <main>
             {
                 articleData?(
-                    
-                    <article className="article-item">
+                    <>
+                    <section className="article-item">
                         <h2>{articleData.title}</h2>
                 <h3>Topic: {articleData.topic}  Author: {articleData.author}</h3>
                 <h4>
@@ -55,7 +76,28 @@ function Article(){
                 </h4>
                 <img src={articleData.article_img_url}></img>
                 <p>{articleData.body}</p>
-                    </article>
+                </section>
+
+
+               
+                {
+                    articleComments?(
+                        <article className="article-comments">
+                            <h2>Comments:</h2>
+                            {
+                                articleComments.map((comment, index)=>{
+                                    return(
+                                        <span key={index} className="comment-wrapper"><p><b>{comment.author}</b>: {comment.body}</p></span>
+                                    )
+                                })
+                            }
+                        </article>
+                    ):(
+                        <p>comments loading...</p>
+                    )
+                }
+                    
+                </>
                 ) :
                 ( 
             <article>
@@ -73,6 +115,7 @@ function Article(){
             </article>
                 
                 )
+                
             }
         </main>
     )
