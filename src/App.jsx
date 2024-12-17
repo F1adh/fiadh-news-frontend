@@ -6,6 +6,7 @@ import './App.css'
 import Header from './Components/Header'
 import Footer from './Components/Footer'
 import ArticleList from './Components/ArticleList'
+import Article from './Components/Article'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -15,6 +16,7 @@ function App() {
       <Header />
       <Routes>
         <Route path='/article-list' element={<ArticleList />} />
+        <Route path='/article-list/:article_id' element={<Article />} />
       </Routes>
       <Footer />
     </>

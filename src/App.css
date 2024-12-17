@@ -58,6 +58,7 @@
   height: auto;
 }
 
-.Link{
-  margin-left: 100px;
+.article-item{
+  background-color: #B4B8AB;
+  color: #284B63;
 }
