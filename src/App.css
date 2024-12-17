@@ -61,4 +61,21 @@
 .article-item{
   background-color: #B4B8AB;
   color: #284B63;
+  overflow: hidden;
+}
+
+.article-comments{
+  margin-top:1px;
+  background-color: #B4B8AB;
+  color: #284B63;
+}
+
+.comment-wrapper{
+  text-align: center;
+  max-width: 100%;
+}
+
+.comment-wrapper p{
+
+  border-bottom: 5px solid #153243
 }
