@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Card, CardHeader } from "@mui/material";
+import { Link } from "react-router-dom";
 
 function ArticleList(){
     const [articlesList, setArticlesList] = useState([]);
@@ -18,7 +19,7 @@ function ArticleList(){
         .then((response)=>response.json())
         .then(({articles})=>{
             setArticlesList(articles)
-            console.log(articles)
+            
         })
         .catch((err)=>{
             console.log(err)
@@ -29,8 +30,10 @@ function ArticleList(){
         fetchArticles();
     },[])
 
+   
+
     return(
-        <main class="article-list">
+        <main className="article-list">
             {
                 articlesList.map((articleItem, index)=>{
                     return(
@@ -38,7 +41,11 @@ function ArticleList(){
                             <h2>{articleItem.title}</h2>
                             <h3>{articleItem.author}, posted {Date(articleItem.created_at)}</h3>
                             <h4>topic: {articleItem.topic} votes:{articleItem.votes}</h4>
+                            <Link to={`/article-list/${articleItem.article_id}`}>
+                            <button>Read Article</button>
+                            </Link>
                             <img src={articleItem.article_img_url}></img>
+                            
                             
                         </article>
                     )
