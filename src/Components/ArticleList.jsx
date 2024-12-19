@@ -1,33 +1,21 @@
 import { useEffect, useState } from "react"
 import { Card, CardHeader } from "@mui/material";
 import { Link } from "react-router-dom";
+import { fetchArticleList } from "../utils/apiHandler";
 
 function ArticleList(){
     const [articlesList, setArticlesList] = useState([]);
-    const myHeaders = new Headers();
-    myHeaders.append("Accept", "application/json");
+        
 
-    const fetchArticles = () =>{
-        const apiPath = 'https://fiadh-nc-news.onrender.com/api/articles'
-        const requestOptions = {
-            method: "GET",
-            headers: myHeaders,
-            redirect: "follow"
-        }
-
-        fetch(apiPath, requestOptions)
-        .then((response)=>response.json())
+    useEffect(()=>{
+        fetchArticleList()
         .then(({articles})=>{
             setArticlesList(articles)
             
         })
         .catch((err)=>{
             console.log(err)
-        })
-    }
-
-    useEffect(()=>{
-        fetchArticles();
+        });
     },[])
 
    

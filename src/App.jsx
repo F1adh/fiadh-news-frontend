@@ -7,6 +7,7 @@ import Header from './Components/Header'
 import Footer from './Components/Footer'
 import ArticleList from './Components/ArticleList'
 import Article from './Components/Article'
+import Home from './Components/Home'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -15,6 +16,7 @@ function App() {
     <>
       <Header />
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path='/article-list' element={<ArticleList />} />
         <Route path='/article-list/:article_id' element={<Article />} />
       </Routes>

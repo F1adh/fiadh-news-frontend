@@ -1,53 +1,18 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { ThreeDots } from 'react-loader-spinner';
+import { getArticleComments, getArticleData } from "../utils/apiHandler";
+import { updateVoteTotal } from "../utils/voteHandler";
 
 
 function Article(){
     const { article_id } = useParams()
     const [articleData, setArticleData] = useState(null);
     const [articleComments, setArticleComments] = useState(null)
-    
-    const myHeaders = new Headers();
-    myHeaders.append("Accept", "application/json");
+    const [articleVotes, setArticleVotes] = useState(0)
+   
 
-    const getArticleData = () =>{
-        const apiPath = `https://fiadh-nc-news.onrender.com/api/articles/${article_id}`
-        const requestOptions = {
-            method: "GET",
-            headers: myHeaders,
-            redirect: "follow"
-        }
-
-        fetch(apiPath, requestOptions)
-        .then((response)=>response.json())
-        .then(({articles})=>{
-            setArticleData(articles[0])
-            
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
-    }
-
-    const getArticleComments = () =>{
-        const apiPath = `https://fiadh-nc-news.onrender.com/api/articles/${article_id}/comments`
-        const requestOptions = {
-            method: "GET",
-            headers: myHeaders,
-            redirect: "follow"
-        }
-
-        fetch(apiPath, requestOptions)
-        .then((response)=>response.json())
-        .then(({comments})=>{
-            setArticleComments(comments)
-            
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
-    }
+   
 
     const dateOptions={ weekday: 'short',
         year: 'numeric',
@@ -57,9 +22,35 @@ function Article(){
         minute: '2-digit' }
 
     useEffect(()=>{
-        getArticleData()
-        getArticleComments()
+        getArticleData(article_id)
+        .then(({articles})=>{
+            setArticleData(articles[0])
+            setArticleVotes(articles[0].votes)
+            
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+
+        
+
+        getArticleComments(article_id)
+        .then(({comments})=>{
+            setArticleComments(comments)
+            
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
     }, [article_id])
+
+    const handleArticleVote = (voteValue) =>{
+        setArticleVotes((currentVotes)=>currentVotes+voteValue)
+        updateVoteTotal(article_id, voteValue)
+        .catch((err)=>{
+            window.alert(`Error: vote not accepted. Error code: ${err}`)
+        })
+    }
 
     return(
         <main>
@@ -72,10 +63,12 @@ function Article(){
                 <h4>
                     posted: {new Date(articleData.created_at).toLocaleString('en-GB', dateOptions)}  
       
-                    Votes: {articleData.votes}
+                    Votes: {articleVotes}
                 </h4>
                 <img src={articleData.article_img_url}></img>
                 <p>{articleData.body}</p>
+                <button onClick={() => handleArticleVote(1)}>^</button>
+                <button onClick={() => handleArticleVote(-1)}>v</button>
                 </section>
 
 
@@ -87,7 +80,9 @@ function Article(){
                             {
                                 articleComments.map((comment, index)=>{
                                     return(
-                                        <span key={index} className="comment-wrapper"><p><b>{comment.author}</b>: {comment.body}</p></span>
+                                        <span key={index} className="comment-wrapper"><p><b>{comment.author}</b>: {comment.body} Votes: {comment.votes}</p>
+                                        <button>^</button>
+                                        </span>
                                     )
                                 })
                             }
