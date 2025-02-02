@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"
 import { ThreeDots } from 'react-loader-spinner';
 import { getArticleComments, getArticleData } from "../utils/apiHandler";
 import { updateVoteTotal } from "../utils/voteHandler";
+import { submitComment } from "../utils/commentHandler";
 
 
 function Article(){
@@ -42,7 +43,7 @@ function Article(){
         .catch((err)=>{
             console.log(err)
         })
-    }, [article_id])
+    }, [article_id, articleComments])
 
     const handleArticleVote = (voteValue) =>{
         setArticleVotes((currentVotes)=>currentVotes+voteValue)
@@ -50,6 +51,25 @@ function Article(){
         .catch((err)=>{
             window.alert(`Error: vote not accepted. Error code: ${err}`)
         })
+    }
+
+    const handleCommentSubmit = (e) =>{
+        e.preventDefault();
+        
+        submitComment(article_id, e.target.comment_body.value)
+
+        e.target.reset();
+
+        getArticleComments(article_id)
+        .then(({comments})=>{
+            setArticleComments(comments)
+            
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+
+
     }
 
     return(
@@ -75,6 +95,7 @@ function Article(){
                
                 {
                     articleComments?(
+                        <>
                         <article className="article-comments">
                             <h2>Comments:</h2>
                             {
@@ -87,6 +108,12 @@ function Article(){
                                 })
                             }
                         </article>
+                        <form onSubmit={handleCommentSubmit}>
+                            <input type="text" id="comment_body"></input>
+                            <input type="hidden" id="comment_user_id"></input>
+                            <input type="submit"></input>
+                        </form>
+                        </>
                     ):(
                         <p>comments loading...</p>
                     )
