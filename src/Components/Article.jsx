@@ -4,6 +4,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import { getArticleComments, getArticleData } from "../utils/apiHandler";
 import { updateVoteTotal } from "../utils/voteHandler";
 import { submitComment } from "../utils/commentHandler";
+import { deleteCommentHandler } from "../utils/deleteCommentHandler";
 
 
 function Article(){
@@ -72,8 +73,13 @@ function Article(){
 
     }
 
+    const handleCommentDelete = (comment_id) =>{
+        
+        deleteCommentHandler(comment_id)
+    }
+
     return(
-        <main>
+        <main>  
             {
                 articleData?(
                     <>
@@ -103,6 +109,14 @@ function Article(){
                                     return(
                                         <span key={index} className="comment-wrapper"><p><b>{comment.author}</b>: {comment.body} Votes: {comment.votes}</p>
                                         <button>^</button>
+                                        {
+                                            comment.author==="cooljmessy"?(
+                                                <button onClick={ () => handleCommentDelete(comment.comment_id)}>Delete</button>
+                                            ):(
+                                                <><p>not your comment</p></>
+                                            )
+                                        }
+                                        
                                         </span>
                                     )
                                 })
